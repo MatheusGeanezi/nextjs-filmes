@@ -1,9 +1,22 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
+import {useState} from 'react'
 import styles from '../styles/Home.module.css'
+import {appEndereco} from '../lib/variaveis_globais.js'
 
-export default function Home({ list }) {
+export default function Home() {
+
+    const [searchText,setSearchText] = useState('')
+    const handleSearch = async()=>{
+      if(searchText !== ''){
+        const retorno = await fetch(`${appEndereco}/api/search?q=${searchText}`)
+        const json = await retorno.json()
+        console.log(json)
+      }
+    }
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -15,6 +28,8 @@ export default function Home({ list }) {
         <h1 className={styles.title}>
           busca
         </h1>
+        <input type="text" value={searchText} onChange={e=>setSearchText(e.target.value)}/>
+        <button onClick={handleSearch}>Buscar</button>
       </main>
     </div>
   )

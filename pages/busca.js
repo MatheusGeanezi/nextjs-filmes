@@ -1,20 +1,23 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import {useState} from 'react'
+import { useState } from 'react'
 import styles from '../styles/Home.module.css'
-import {appEndereco} from '../lib/variaveis_globais.js'
+import { appEndereco } from '../lib/variaveis_globais.js'
 
 export default function Home() {
 
-    const [searchText,setSearchText] = useState('')
-    const handleSearch = async()=>{
-      if(searchText !== ''){
-        const retorno = await fetch(`${appEndereco}/api/search?q=${searchText}`)
-        const json = await retorno.json()
-        console.log(json)
-      }
+  const [searchText, setSearchText] = useState('')
+  const [moveiList, setMovieList] = useState([])
+
+
+  const handleSearch = async () => {
+    if (searchText !== '') {
+      const retorno = await fetch(`${appEndereco}/api/search?q=${searchText}`)
+      const json = await retorno.json()
+      setMovieList(json.list)
     }
+  }
 
 
   return (
@@ -28,8 +31,23 @@ export default function Home() {
         <h1 className={styles.title}>
           busca
         </h1>
-        <input type="text" value={searchText} onChange={e=>setSearchText(e.target.value)}/>
+        <input type="text" value={searchText} onChange={e => setSearchText(e.target.value)} />
         <button onClick={handleSearch}>Buscar</button>
+
+        <hr />
+
+        <ul>
+          {moveiList.map(item => (
+            <li>
+              <a href={`/movie/${item.id}`}>
+                <img src={`http://image.tmdb.org/t/p/original${item.poster_path}`} width="150" /><br />
+                {item.title}
+              </a>
+            </li>
+          ))}
+
+        </ul>
+
       </main>
     </div>
   )
